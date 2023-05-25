@@ -1,0 +1,1259 @@
+\documentclass[10pt,twoside]{article}
+
+% Math symbols
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% Headers/Footers
+\usepackage{fancyhdr}
+
+% Colors
+\usepackage[usenames,dvipsnames]{color}
+
+% Importing and manipulating graphics
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{lscape}
+
+% Misc packages
+\usepackage{verbatim}
+\usepackage{dcolumn}
+\usepackage{ifpdf}
+\usepackage{enumerate}
+
+% PDF Bookmarks and hyperref stuff
+\usepackage[
+  bookmarks=true,
+  bookmarksnumbered=true,
+  colorlinks=true,
+  filecolor=blue,
+  linkcolor=blue,
+  urlcolor=blue,
+  hyperfootnotes=true
+  citecolor=blue
+]{hyperref}
+
+% Improved hyperlinking to figures
+% (include after hyperref)
+\usepackage[all]{hypcap}
+
+% Improved citation handling
+% (include after the hyperref stuff)
+\usepackage{cite}
+
+% Pretty-print code
+\usepackage{listings}
+
+% -----------------------------------------------------------------
+% Hyper-references
+% -----------------------------------------------------------------
+%
+% This page has lots of good advice on hyper-references, including
+% the use of the hypcap package and \phantomsection for generating
+% labels to text.
+%
+% http://en.wikibooks.org/wiki/LaTeX/Labels_and_Cross-referencing
+%
+% -----------------------------------------------------------------
+% Setup the margins
+% -----------------------------------------------------------------
+% Footer Template
+
+% Set left margin - The default is 1 inch, so the following
+% command sets a 1.25-inch left margin.
+\setlength{\oddsidemargin}{0.25in}
+\setlength{\evensidemargin}{0.25in}
+
+% Set width of the text - What is left will be the right
+% margin. In this case, right margin is
+% 8.5in - 1.25in - 6in = 1.25in.
+\setlength{\textwidth}{6in}
+
+% Set top margin - The default is 1 inch, so the following
+% command sets a 0.75-inch top margin.
+%\setlength{\topmargin}{-0.25in}
+
+% Set height of the header
+\setlength{\headheight}{0.3in}
+
+% Set vertical distance between the header and the text
+\setlength{\headsep}{0.2in}
+
+% Set height of the text
+\setlength{\textheight}{8.5in}
+
+% Set vertical distance between the text and the
+% bottom of footer
+\setlength{\footskip}{0.4in}
+
+% -----------------------------------------------------------------
+% Allow floats to take up more space on a page.
+% -----------------------------------------------------------------
+
+% see page 142 of the Companion for this stuff and the
+% documentation for the fancyhdr package
+\renewcommand{\textfraction}{0.05}
+\renewcommand{\topfraction}{0.95}
+\renewcommand{\bottomfraction}{0.95}
+% dont make this too small
+\renewcommand{\floatpagefraction}{0.35}
+\setcounter{totalnumber}{5}
+
+% -----------------------------------------------------------------
+% Abbreviated symbols
+% -----------------------------------------------------------------
+\newcommand{\sinc}{\ensuremath{\,\text{sinc}}}
+\newcommand{\rect}{\ensuremath{\,\text{rect}}}
+
+% =================================================================
+% The document starts here
+% =================================================================
+%
+\begin{document}
+\title{Power Supply Capacitors}
+\author{D. W. Hawkins (dwh@ovro.caltech.edu)}
+\date{\today}
+%\date{August 31, 2012}
+\maketitle
+
+% No header/footer on the first page
+\thispagestyle{empty}
+
+\tableofcontents
+
+% start the intro on an odd page
+\cleardoublepage
+%\clearpage
+
+% Set up the header/footer
+\pagestyle{fancy}
+\lhead{Power Supply Capacitors}
+\chead{}
+\rhead{\today}
+\lfoot{}
+\cfoot{}
+\rfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+% Set the listings package language to Tcl
+\lstset{language=Tcl}
+
+% =================================================================
+\section{Introduction}
+% =================================================================
+
+Switch-mode power supplies (SMPS) use capacitors, inductors, 
+MOSFETs, and switching controllers to convert an (unregulated)
+input power source into a regulated output power source.
+An SMPS circuit contains signal paths carrying pulsed
+current, with fast edge-rates. These signal paths require
+capacitors with high-capacitance, low equivalent series 
+resistance (ESR), and low equivalent series inductance (ESL).
+This document contains details on capacitors suitable for
+use in power supply designs.
+
+% =================================================================
+\section{Multi-layer Ceramic Capacitors}
+% =================================================================
+
+Multi-layer capacitor capacitors (MLCC), or simply {\em ceramic}
+capacitors, are excellent for use in power supplies. 
+The following capacitor characteristics are critical to the
+design of a power supply, however, these details are
+often {\em not} included in the device data sheets;
+%
+\begin{itemize}
+\item Equivalent series resistance (ESR)
+\item Equivalent series inductance (ESL)
+\item RMS current carrying capability (thermal heating)
+\item The change in capacitance value with applied DC voltage
+
+For example, a power supply with an input voltage of 12V
+may use an input decoupling capacitor with a face-value of
+10$\mu$F, however, under a 12V DC bias, the {\em actual}
+capacitance value could be as low as 6$\mu$F. If the power
+supply design required an input capacitance of {\em at least}
+10$\mu$F, then parallel capacitors would be required.
+
+\end{itemize}
+%
+These characteristics are not included in data sheets, since 
+some of these parameters are multi-dimensional, i.e., they
+change (non-linearly) with frequency and/or with applied DC voltage.
+
+The following sections analyze capacitor characteristics
+and tools from multiple vendors (in alphabetical order).
+
+
+% -----------------------------------------------------------------
+% Surface Mount Capacitor Footprints
+% -----------------------------------------------------------------
+
+\begin{table}
+\caption{Surface mount capacitor footprint sizes.}
+\label{tab:smt_footprints}
+\begin{center}
+\begin{tabular}{|c|c||c|c|}
+\hline
+\multicolumn{2}{|c||}{Imperial} & \multicolumn{2}{c|}{Metric}\\
+\hline
+Code & Dimensions (mils)     & Code & Dimensions (mm)\\
+\hline\hline
+&&&\\
+0603 &  $63\times31$ & 1608M & $1.60\times0.80$\\
+0805 &  $79\times49$ & 2012M & $2.00\times1.25$\\
+1206 & $126\times63$ & 3216M & $3.20\times1.60$\\
+1210 & $126\times98$ & 3225M & $3.20\times2.50$\\
+&&&\\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+\clearpage
+% -----------------------------------------------------------------
+\subsection{AVX}
+% -----------------------------------------------------------------
+
+Figure~\ref{fig:avx_spicap_gui} shows the AVX capacitor characterization
+tool \href{http://www.avx.com/SpiApps/default.asp}{SpiCap}
+(version 3.0)\footnote{The AVX web site indicates that the tool
+SpiCALCI 7.0 can also be used for power supply capacitor selection,
+however, the tool currently only works for AC-DC converter designs.
+For example, if you select a 1210 package size and X7R dielectric,
+the tool generates a warning message.}. The tool is incomplete;
+there is no option for entering part numbers, no details on
+RMS current handling or thermal conductivity are provided,
+and there is no option to generate a SPICE netlist (you have to
+make a note of the calculated parameters and create your own netlist).
+
+Table~\ref{tab:avx_caps} shows a selection of AVX ceramic capacitor
+part numbers obtained from \href{http://www.digikey.com}{Digikey}.
+SpiCap was used to generate estimates of ESR and ESL. Various
+package sizes were selected to show the change in ESL.
+Constructing the table showed another limitation of SpiCap;
+the characteristics of valid part numbers are not always
+supported (i.e., the missing ESR values).
+
+The AVX~\href{http://www.avx.com/docs/masterpubs/smccp.pdf}
+{Surface Mount Ceramic Capacitor Products} catalog  (version 12.4)
+contains details of AVX capacitor products, eg., 
+see p18 for X7R dielectric, and p25 for X5R. There are no
+details on capacitance change versus DC bias for the X7R and
+X5R dielectrics for specific parts (p28 has a plot for Y5V dielectric).
+There is a general description of MLCC design on p99, and that
+description has comments on the change in capacitance
+with applied AC and DC voltages, and change in temperature.
+The AVX document refers the reader to use SpiCap for component
+characteristics.
+
+The main \textcolor{red}{problem} with the AVX documentation is that
+there are no details on the {\em power} handling 
+capability of the devices, or the thermal conductivity of the packages.
+
+\clearpage
+% -----------------------------------------------------------------
+% SpiCap3.0
+% -----------------------------------------------------------------
+%
+\begin{figure}[p]
+  \begin{center}
+    \includegraphics[width=\textwidth]{figures/avx_spicap_gui.png}\\
+  \end{center}
+  \caption{AVX SpiCap 3.0 GUI.
+  The GUI shows the characteristics of a 10$\mu$F capacitor
+  (25V rating, X5R dielectric, 1210 package) with a 12V DC bias
+  (48\% of rated voltage). The capacitance value reduces to
+  8.88$\mu$F due to the DC bias. The ESR at 500kHz is 4m$\Omega$.
+  The 1210 package ESL is 900pH.}
+  \label{fig:avx_spicap_gui}
+\end{figure}
+
+% -----------------------------------------------------------------
+% AVX part numbers
+% -----------------------------------------------------------------
+
+\begin{table}[p]
+\caption{Example AVX ceramic capacitor characteristics.}
+\label{tab:avx_caps}
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline
+Part   & Package & Voltage & Dielectric & Capacitance  & ESR       & ESL\\
+Number &         & Rating  &            & (0V DC bias) & (@500kHz) & \\
+\hline\hline
+&&&&&&\\
+06033D105KAT2A & 0603 & 25V & X5R & 1$\mu$F &             & 500pH\\
+&&&&&&\\
+08053D105KAT2A & 0805 & 25V & X5R & 1$\mu$F & 13m$\Omega$ & 600pH\\
+08053C105KAT2A & 0805 & 25V & X7R & 1$\mu$F &             & 600pH\\
+&&&&&&\\
+12063D105KAT2A & 1206 & 25V & X5R &   1$\mu$F & 15m$\Omega$ & 1000pH\\
+12063C105KAT2A & 1206 & 25V & X7R &   1$\mu$F & 12m$\Omega$ & 1000pH\\
+12063D475KAT2A & 1206 & 25V & X5R & 4.7$\mu$F &  5m$\Omega$ & 1000pH\\
+12063D106KAT2A & 1206 & 25V & X5R &  10$\mu$F &             & 1000pH\\
+&&&&&&\\
+12103D105KAT2A & 1210 & 25V & X5R &   1$\mu$F &             & 900pH\\
+12103C105KAT2A & 1210 & 25V & X7R &   1$\mu$F & 12m$\Omega$ & 900pH\\
+12103D476KAT2A & 1210 & 25V & X5R & 4.7$\mu$F &  5m$\Omega$ & 900pH\\
+12103D106KAT2A & 1210 & 25V & X5R &  10$\mu$F &  3m$\Omega$ & 900pH\\
+12103C106KAT2A & 1210 & 25V & X7R &  10$\mu$F &  3m$\Omega$ & 900pH\\
+&&&&&&\\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+\clearpage
+% -----------------------------------------------------------------
+\subsection{Kemet}
+% -----------------------------------------------------------------
+
+Figures~\ref{fig:kemet_cap_selector} through~\ref{fig:kemet_power}
+show screen-shots of the Kemet component characterization tool
+\href{http://www.kemet.com/kemet/web/homepage/kechome.nsf/weben/kemsoft}
+{KEMET Spice} (version 3.9.56). 
+Figure~\ref{fig:kemet_cap_selector} shows the capacitor selection
+GUI, with the 10$\mu$F C1210C106K3PAC capacitor selected.
+Figure~\ref{fig:kemet_Z_and_ESR} shows the capacitor impedance and 
+ESR\footnote{Menu option: Change Plot$\rightarrow$Plot Z and R.},
+Figure~\ref{fig:kemet_C_and_ESL} shows the capacitance value and 
+ESL\footnote{Menu option: Change Plot$\rightarrow$Plot Cap and L.},
+while Figure~\ref{fig:kemet_power} shows the power 
+handling\footnote{Menu option: Change Plot$\rightarrow$Plot Current(I).}.
+%
+Figures~\ref{fig:kemet_Z_and_ESR} through Figure~\ref{fig:kemet_power}
+show the capacitor characteristics for a DC bias of 0V and 
+12V\footnote{Menu option: Bias Change$\rightarrow$Custom, and
+then enter 12V.}.
+
+KEMET Spice can generate a capacitor SPICE model (netlist) for use in other
+SPICE simulators. Figure~\ref{fig:kemet_model} shows the SPICE model
+generator display. The SPICE model is generated based on a part 
+number, DC bias voltage, and frequency. The frequency can be selected
+by moving the mouse on the screen, press CTRL+0 to lock the screen,
+and then selecting the model generator\footnote{Menu option:
+MonitorXY$\rightarrow$Model Display.}. The SPICE model is
+generated by clicking on the {\em Output List} button in
+Figure~\ref{fig:kemet_model}, selecting an output file name, and
+the clicking {\em Save List}.
+
+Table~\ref{tab:kemet_caps} shows a selection of KEMET ceramic capacitor
+part numbers obtained from \href{http://www.digikey.com}{Digikey}.
+The part numbers in the table include both $\pm10\%$ and $\pm20\%$
+tolerance parts. KEMET Spice does not have an option for selecting 
+$\pm20\%$ tolerance parts so the parameters for $\pm10\%$ parts were used.
+KEMET SPICE was used to estimate capacitance, ESR, ESL, and power handling.
+
+The capacitor power handling capability is determined based on
+the power dissipation that causes a temperature rise of 20$^\circ$C.
+For example, in Figure~\ref{fig:kemet_power} the allowable power dissipation
+$\Delta P = \Delta T/\theta_{\rm JA} = 20/55 = 363.64$mW, where
+$\theta_{\rm JA} = 55^\circ$C/W is the thermal conductivity.
+The RMS current in Figure~\ref{fig:kemet_power} is calculated using
+this power limit along with the ESR shown in Figure~\ref{fig:kemet_Z_and_ESR}.
+The RMS current in Figure~\ref{fig:kemet_power}(a) is calculated as
+$I = \sqrt{P/\text{ESR}} = \sqrt{363.64\text{mW}/5.87\text{m}\Omega} = 7.87$A,
+and in Figure~\ref{fig:kemet_power}(b) is calculated as
+$I = \sqrt{363.64\text{mW}/4.97\text{m}\Omega} = 8.55$A.
+
+Table~\ref{tab:kemet_caps} shows how the capacitance value and ESR change
+with applied DC bias voltage (the change in current is due to the change in ESR).
+SMPS power supplies always use capacitors with a non-zero DC bias, so
+the capacitance value will {\em always} be lower than the nominal
+capacitance value. If a power supply design requires a specific value
+of capacitance, then higher valued capacitors must be used. A non-zero
+DC bias lowers the ESR, resulting in higher current handling.
+
+The KEMET Spice interface has several minor bugs;
+%
+\begin{itemize}
+\item If you are using a DC bias other than the default value of
+0V, then the DC bias value needs to be re-selected when you change
+parts (via File$\rightarrow$Choose Another Ceramic), otherwise
+the curves and values displayed on the plots are wrong
+(they are calculated using a 0V DC bias, regardless of the
+Change Bias menu selection).
+
+When changing parts, unlock the screen (using CTRL+0), re-select the
+desired DC bias, move the cursor to the desired frequency, 
+relock the screen, and then view the capacitor characteristics
+using the Change Plot menu.
+%
+\item When the screen is locked, eg., to obtain parameters at 500kHz,
+and you select a different display, the frequency will sometimes jump slightly
+higher, requiring you to unlock the screen, move the cursor, and relock.
+\end{itemize}
+%
+Minor bugs aside, the KEMET Spice tool is very useful, as it provides
+all of the capacitor characteristics required when designing power supplies.
+
+% -----------------------------------------------------------------
+% SpiCap3.0
+% -----------------------------------------------------------------
+%
+\begin{figure}[p]
+  \begin{center}
+    \includegraphics[width=\textwidth]{figures/kemet_cap_selector.png}\\
+  \end{center}
+  \caption{KEMET Spice capacitor selection GUI.}
+  \label{fig:kemet_cap_selector}
+\end{figure}
+
+\begin{figure}[p]
+  \begin{center}
+    \includegraphics[width=\textwidth]{figures/kemet_C1210C106K3PAC_Z_and_ESR_DC0V.png}\\
+    (a) 0V DC bias\\
+    $\quad$\\
+    \includegraphics[width=\textwidth]{figures/kemet_C1210C106K3PAC_Z_and_ESR_DC12V.png}\\
+    (b) 12V DC bias\\
+  \end{center}
+  \caption{KEMET 10$\mu$F C1210C106K3PAC capacitor impedance and ESR.}
+  \label{fig:kemet_Z_and_ESR}
+\end{figure}
+
+\begin{figure}[p]
+  \begin{center}
+    \includegraphics[width=\textwidth]{figures/kemet_C1210C106K3PAC_C_and_ESL_DC0V.png}\\
+    (a) 0V DC bias\\
+    $\quad$\\
+    \includegraphics[width=\textwidth]{figures/kemet_C1210C106K3PAC_C_and_ESL_DC12V.png}\\
+    (b) 12V DC bias\\
+  \end{center}
+  \caption{KEMET 10$\mu$F C1210C106K3PAC capacitor capacitance value and ESL.}
+  \label{fig:kemet_C_and_ESL}
+\end{figure}
+
+\begin{figure}[p]
+  \begin{center}
+    \includegraphics[width=\textwidth]{figures/kemet_C1210C106K3PAC_power_DC0V.png}\\
+    (a) 0V DC bias\\
+    $\quad$\\
+    \includegraphics[width=\textwidth]{figures/kemet_C1210C106K3PAC_power_DC12V.png}\\
+    (b) 12V DC bias\\
+  \end{center}
+  \caption{KEMET 10$\mu$F C1210C106K3PAC capacitor power handling.}
+  \label{fig:kemet_power}
+\end{figure}
+
+\begin{figure}[p]
+  \begin{center}
+    \includegraphics[width=\textwidth]{figures/kemet_C1210C106K3PAC_model.png}\\
+  \end{center}
+  \caption{KEMET 10$\mu$F C1210C106K3PAC capacitor model.}
+  \label{fig:kemet_model}
+\end{figure}
+
+% -----------------------------------------------------------------
+% KEMET part numbers
+% -----------------------------------------------------------------
+
+\begin{landscape}
+\begin{table}[p]
+\small
+\caption{Example KEMET ceramic capacitor characteristics (@500kHz).}
+\label{tab:kemet_caps}
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c||c|c|c||c|c|c||c|c|}
+\hline
+Part   & Cap. & Voltage & Tol. & Dielectric & Package &
+\multicolumn{3}{c||}{DC Bias of 0V}  &
+\multicolumn{3}{c||}{DC Bias of 50\%} & ESL & Thermal\\
+%
+\cline{7-12}
+Number &   & Rating  &           &            &         &
+Cap. & ESR & Current    &
+Cap. & ESR & Current    &       & ($\theta_{\rm JA}$)\\
+%
+       & ($\mu$F) & (V) & (\%) & & & 
+($\mu$F) & (m$\Omega$) & (A$_{\rm RMS}$) &
+($\mu$F) & (m$\Omega$) & (A$_{\rm RMS}$) & (pH) & ($^\circ$C/W)\\
+\hline\hline
+&&&&&&&&&&&&&\\
+C0603C105K3PAC &   1 &  25 & $\pm10$ & X5R & 0603 &  0.92 & 19 &  4.9 & 0.59 & 13 &  5.9 & 1250 & 45\\
+C0603C225K4PAC & 2.2 &  16 & $\pm10$ & X5R & 0603 &  2.0  &  9 &  7.8 & 1.4  &  6 &  9.2 & 1250 & 38\\
+C0603C106M9PAC &  10 & 6.3 & $\pm20$ & X5R & 0603 &  9.2  &  5 & 10.5 & 5.8  &  3 & 13.0 &  830 & 41\\
+&&&&&&&&&&&&&\\
+C0805C105K3PAC &   1 &  25 & $\pm10$ & X5R & 0805 &  0.92 &  9 &  5.3 & 0.59 & 6 &  6.5 & 1110 & 78\\
+C0805C475K3PAC & 4.7 &  25 & $\pm10$ & X5R & 0805 &  4.3  &  4 &  9.6 & 2.8  & 3 & 11.8 & 1180 & 55\\
+C0805C106K4PAC &  10 &  16 & $\pm10$ & X5R & 0805 &  9.2  &  4 & 10.8 & 7.9  & 3 & 11.6 & 1000 & 45\\
+C0805C476M9PAC &  47 & 6.3 & $\pm20$ & X5R & 0805 & 42.5  &  2 & 17.1 & 16.2 & 1 & 27.1 &  500 & 35\\
+&&&&&&&&&&&&&\\
+C1206C105K3PAC &   1 &  25 & $\pm10$ & X5R & 1206 &  0.92 & 21 &  3.3 & 0.59 & 14 &  4.1 &  950 & 85\\
+C1206C106K3PAC &  10 &  25 & $\pm10$ & X5R & 1206 &  9.2  &  7 &  7.0 & 5.9  &  5 &  8.7 & 1180 & 55\\
+C1206C107M9PAC & 100 & 6.3 & $\pm20$ & X5R & 1206 & 90.5  &  2 & 18.4 & 36.7 &  1 & 28.7 & 1060 & 28\\
+&&&&&&&&&&&&&\\
+C1210C105K3PAC &   1 &  25 & $\pm10$ & X5R & 1210 &  0.92 & 19 &  3.3 &  0.8 & 17 &  3.5 &  730 & 95\\
+C1210C106K3PAC &  10 &  25 & $\pm10$ & X5R & 1210 &  9.2  &  6 &  7.8 &  5.9 &  4 &  9.8 &  990 & 55\\
+C1210C107M9PAC & 100 & 6.3 & $\pm20$ & X5R & 1210 & 90.4  &  3 & 10.5 & 57.4 &  2 & 13.2 &  850 & 60\\
+&&&&&&&&&&&&&\\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+\end{landscape}
+
+\clearpage
+% -----------------------------------------------------------------
+\subsection{Murata}
+% -----------------------------------------------------------------
+
+Figures~\ref{fig:murata_simsurfing_cap_selector} 
+through~\ref{fig:murata_ESL} show screen-shots of the Murata 
+component characterization tool
+\href{http://www.murata.com/simsurfing/}{SimSurfing}. 
+%
+Figure~\ref{fig:murata_simsurfing_cap_selector} shows the capacitor
+selection GUI, with the 10$\mu$F GRM32DR61E106KA12 capacitor selected.
+Figure~\ref{fig:murata_DC_bias} shows the capacitance value change
+with applied DC bias (C-DC Bias GUI button).
+%
+Figure~\ref{fig:murata_power} shows the change in temperature
+versus RMS current, i.e., the power handling capability of the
+capacitor (Temp. Rise GUI button).
+%
+Figures~\ref{fig:murata_Z}, \ref{fig:murata_C}, \ref{fig:murata_ESR}, 
+and~\ref{fig:murata_ESL} show the capacitor impedance, capacitance,
+ESR, and ESL versus frequency for a DC bias of 0V and 12.5V (50\% of 
+rated voltage). These plots were generated using the $|$Z$|$, C, R, and L
+GUI buttons respectively. Each plot contains curves generated 
+using two DC bias settings (the GUI check-box Display Multiple Graphs
+need to be checked to have the plots overlay).
+
+Table~\ref{tab:murata_caps} shows a selection of Murata ceramic capacitor
+part numbers obtained from \href{http://www.digikey.com}{Digikey}.
+The SimSurfing tool was used to determine the parameters shown in
+the table. The SimSurfing measurement guide (accessed via the help menu),
+indicates that the temperature response is calculated using a DC
+bias of 50\% of the voltage rating, i.e., the temperature response
+plot provides the RMS current given under the {\em DC Bias of 50\%}
+column in the table. The RMS current for the {\em DC Bias of 0V}
+column was calculated by scaling the power by the ESR, i.e.,
+%
+\begin{equation}
+I_{\rm DC0V} = I_{\rm DC50\%}\sqrt{\frac{R_{\rm DC50\%}}{R_{\rm DC0V}}},
+\end{equation}
+% 
+where the subscripts on $I$ and $R$ indicate the DC bias. 
+SimSurfing does not provide details on the thermal
+resistance of the capacitors, so it was estimated via;
+%
+\begin{equation}
+\theta_{\rm JA} = \frac{20^\circ\text{C}}{I_{\rm DC50\%}^2R_{\rm DC50\%}},
+\end{equation}
+%
+where $I_{\rm DC50\%}$ is the RMS current at a DC bias of 50\% of
+the rated voltage read from the temperature rise plot at $20^\circ\text{C}$.
+The SimSurfing measurement guide recommends that the capacitor temperature
+rise is under $20^\circ\text{C}$.
+
+Table~\ref{tab:murata_caps} demonstrates a potential issue with the
+use of ceramic capacitors in power supply designs; at a DC bias of
+50\%, the 4.7$\mu$F and 10$\mu$F 0805 capacitors have virtually the
+same capacitance of 1.8$\mu$F and 1.9$\mu$F respectively!
+Figure~\ref{fig:murata_10uF_cap_change} plots the change in capacitance
+for the 10$\mu$F part in 1210, 1206, and 0603 packages.
+The 1210 and 1206 packages are virtually identical, yet the
+1206 package suffers an {\em additional} 30\% capacitance
+loss relative to the 1210 part (which has already lost 30\%)!
+This loss in capacitance {\em must} be accounted for when determining
+the number of capacitors required to meet a specific total capacitance
+requirement.
+
+% -----------------------------------------------------------------
+% SimSurfing
+% -----------------------------------------------------------------
+%
+\begin{figure}[p]
+  \begin{center}
+    \includegraphics[width=\textwidth]{figures/murata_simsurfing_gui.png}\\
+  \end{center}
+  \caption{Murata SimSurfing capacitor selection GUI.}
+  \label{fig:murata_simsurfing_cap_selector}
+\end{figure}
+
+% -----------------------------------------------------------------
+% Screen captures
+% -----------------------------------------------------------------
+%
+% * Scale Firefox to desired size
+% * Shift-Ctrl-Alt-PrScr
+% * Paste into Corel PhotoPaint
+% * Crop the graph area of the display (eg., 1027 x 670)
+% * Save as PNG
+% * Convert to BMP and back to PNG (to stop pdflatex from crashing)
+%
+\begin{figure}[p]
+  \begin{center}
+    \includegraphics[width=0.9\textwidth]{figures/murata_GRM32DR61E106KA12_DC_bias.png}
+  \end{center}
+  \caption{Murata 10$\mu$F GRM32DR61E106KA12 capacitor change with applied DC bias.}
+  \label{fig:murata_DC_bias}
+\end{figure}
+
+\begin{figure}[p]
+  \begin{center}
+    \includegraphics[width=0.9\textwidth]{figures/murata_GRM32DR61E106KA12_power.png}
+  \end{center}
+  \caption{Murata 10$\mu$F GRM32DR61E106KA12 capacitor change in temperature with RMS current.}
+  \label{fig:murata_power}
+\end{figure}
+
+\begin{figure}[p]
+  \begin{center}
+    \includegraphics[width=0.9\textwidth]{figures/murata_GRM32DR61E106KA12_Z.png}
+  \end{center}
+  \caption{Murata 10$\mu$F GRM32DR61E106KA12 capacitor impedance vs frequency for 0V DC bias and 12.5V (50\%) DC bias.}
+  \label{fig:murata_Z}
+\end{figure}
+
+\begin{figure}[p]
+  \begin{center}
+    \includegraphics[width=0.9\textwidth]{figures/murata_GRM32DR61E106KA12_C.png}
+  \end{center}
+  \caption{Murata 10$\mu$F GRM32DR61E106KA12 capacitor capacitance vs frequency for 0V DC bias and 12.5V (50\%) DC bias.}
+  \label{fig:murata_C}
+\end{figure}
+
+\begin{figure}[p]
+  \begin{center}
+    \includegraphics[width=0.9\textwidth]{figures/murata_GRM32DR61E106KA12_ESR.png}
+  \end{center}
+  \caption{Murata 10$\mu$F GRM32DR61E106KA12 capacitor ESR vs frequency for 0V DC bias and 12.5V (50\%) DC bias.}
+  \label{fig:murata_ESR}
+\end{figure}
+
+\begin{figure}[p]
+  \begin{center}
+    \includegraphics[width=0.9\textwidth]{figures/murata_GRM32DR61E106KA12_ESL.png}
+  \end{center}
+  \caption{Murata 10$\mu$F GRM32DR61E106KA12 capacitor ESL vs frequency for 0V DC bias and 12.5V (50\%) DC bias.}
+  \label{fig:murata_ESL}
+\end{figure}
+
+% -----------------------------------------------------------------
+% Murata part numbers
+% -----------------------------------------------------------------
+
+\begin{landscape}
+\begin{table}[p]
+\small
+\caption{Example Murata ceramic capacitor characteristics (@500kHz).}
+\label{tab:murata_caps}
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c||c|c|c||c|c|c||c|c|}
+\hline
+Part   & Cap. & Voltage & Tol. & Dielectric & Package &
+\multicolumn{3}{c||}{DC Bias of 0V}  &
+\multicolumn{3}{c||}{DC Bias of 50\%} & ESL & Thermal\\
+%
+\cline{7-12}
+Number &   & Rating  &           &            &         &
+Cap. & ESR & Current    &
+Cap. & ESR & Current    &       & ($\theta_{\rm JA}$)\\
+%
+       & ($\mu$F) & (V) & (\%) & & & 
+($\mu$F) & (m$\Omega$) & (A$_{\rm RMS}$) &
+($\mu$F) & (m$\Omega$) & (A$_{\rm RMS}$) & (pH) & ($^\circ$C/W)\\
+\hline\hline
+&&&&&&&&&&&&&\\
+GRM188R61E105KA12D &    1 &  25 & $\pm10$ & X5R & 0603 &   1.0 & 14 & 2.1 & 0.43 & 19 & 1.8 & 300 & 325\\
+GRM188R60J106ME47D &   10 & 6.3 & $\pm20$ & X5R & 0603 &  10.0 &  7 & 4.3 & 4.4  &  9 & 3.8 & 240 & 154\\
+GRM188R60G226MEA0D &   22 &   4 & $\pm20$ & X5R & 0603 &  20.6 &  3 & 4.2 & 12.0 &  3 & 4.2 & 240 & 378\\
+&&&&&&&&&&&&&\\
+GRM216R61E105KA12D &    1 &  25 & $\pm10$ & X5R & 0805 &   1.0 & 24 & 2.1 & 0.44 & 29 & 1.9 & 320 & 191\\
+GRM21BR61E475KA12L &  4.7 &  25 & $\pm10$ & X5R & 0805 &   5.0 &  7 & 3.4 & 1.8  &  7 & 3.4 & 280 & 247\\
+GRM21BR61E106KA73L &   10 &  25 & $\pm10$ & X5R & 0805 &  10.2 &  5 & 4.2 & 1.9  &  5 & 4.2 & 280 & 227\\
+GRM21BR60J226ME39L &   22 & 6.3 & $\pm20$ & X5R & 0805 &  22.0 &  4 & 4.7 & 11.9 &  4 & 4.7 & 260 & 226\\
+&&&&&&&&&&&&&\\
+GRM319R61E105KC36D &    1 &  25 & $\pm10$ & X5R & 1206 &   1.0 & 11 & 2.4 & 0.85 & 11 & 2.4 & 580 & 316\\
+GRM31CR61E106KA12L &   10 &  25 & $\pm10$ & X5R & 1206 &  10.4 &  5 & 3.9 & 4.1  &  5 & 3.9 & 520 & 263\\
+GRM31CR60J107ME39L &  100 & 6.3 & $\pm20$ & X5R & 1206 & 100.3 &  3 & 4.1 & 39.5 &  2 & 5.1 & 360 & 385\\
+&&&&&&&&&&&&&\\
+GRM32RR71H105KA01L &    1 &  50 & $\pm10$ & X7R & 1210 &   1.0 &  6 & 3.6 & 0.88 &  7 & 3.3 & 330 & 262\\
+GRM32DR61E106KA12L &   10 &  25 & $\pm10$ & X5R & 1210 &  10.3 &  4 & 5.7 & 7.3  &  5 & 5.1 & 340 & 154\\
+GRM32ER60J107ME20L &  100 & 6.3 & $\pm20$ & X5R & 1210 &  95.6 &  3 & 5.5 & 68.0 &  3 & 5.5 & 310 & 220\\
+&&&&&&&&&&&&&\\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+\end{landscape}
+
+% -----------------------------------------------------------------
+% Murata Capacitance change with package size
+% -----------------------------------------------------------------
+%
+\begin{figure}[p]
+  \begin{center}
+    \includegraphics[width=0.9\textwidth]{figures/murata_10uF_cap_change_a.png}\\
+    (a) change in capacitance\\
+    $\quad$\\
+    \includegraphics[width=0.9\textwidth]{figures/murata_10uF_cap_change_b.png}\\
+    (b) relative change\\
+  \end{center}
+  \caption{Murata 10$\mu$F capacitor capacitance change with  package size.
+  For a 25V voltage rated capacitor operating at a DC bias of 50\% (12.5V),
+  the capacitance loss for the 1210, 1206, and 0805 packages is
+  -29\%, -61\%, and -81\%  respectively. The capacitance loss in the
+  1206 and 0805 packages is {\em significant}.}
+  \label{fig:murata_10uF_cap_change}
+\end{figure}
+
+\clearpage
+% -----------------------------------------------------------------
+\subsection{Taiyo Yuden}
+% -----------------------------------------------------------------
+
+Figures~\ref{fig:taiyo_yuden_simsurfing_cap_selector} 
+and~\ref{fig:taiyo_yuden_TMK325BJ106MM_characteristics} show 
+screen-shots of the Taiyo Yuden 
+\href{http://www.yuden.co.jp/ut/product/support/tool/}
+{\em Components Selection Guide \& Data Library}.
+%
+Figure~\ref{fig:taiyo_yuden_simsurfing_cap_selector} shows the capacitor
+selection GUI, with the 10$\mu$F TMK325BJ106MM capacitor selected.
+Figure~\ref{fig:taiyo_yuden_TMK325BJ106MM_characteristics} shows 
+the screen that appears when you click the {\em Plot} button
+next to a capacitor part number.
+%
+Each of the six characteristic curves in 
+Figure~\ref{fig:taiyo_yuden_TMK325BJ106MM_characteristics}
+can be clicked on, and data points read from the curves.
+The plots can also be saved as .bmp, .jpg, or .pdf.
+Figures~\ref{fig:taiyo_yuden_Z_and_ESR} 
+through~\ref{fig:taiyo_yuden_temperature} show the curves
+for the 10$\mu$F TMK325BJ106MM capacitor.
+%
+These parameter curves are also available on the Taiyo Yuden
+web page for the
+\href{http://www.yuden.co.jp/ut/product/category/capacitor/TMK325BJ106MM-T.html}
+{TMK325BJ106MM-T} in the 
+\href{http://www.yuden.co.jp/productdata/sheet/tmk325bj106mm.pdf}
+{Characteristics} data sheet.
+Component characteristic curves can also be generated online in a
+web browser using 
+\href{http://ds.yuden.co.jp/TYCOMPAS/ut/searcherMain.do}
+{TY-COMPAS} (Taiyo Yuden COMPonent Assist System).
+
+The Taiyo Yuden tool has a couple of limitations;
+%
+\begin{itemize}
+\item 
+There is no option for selecting a new DC bias, so although
+you can determine the change in capacitance value, there is
+no way to determine the change in ESR.
+%
+\item There are no details on the DC bias used to generate the
+power handling plot in Figure~\ref{fig:taiyo_yuden_power}.
+A DC bias of 0V is assumed.
+%
+\end{itemize}
+%
+A SPICE model for the capacitor at a 0V DC Bias can be saved
+by clicking on the {\em Save Spice Model} button on the left
+side of the GUI in
+Figure~\ref{fig:taiyo_yuden_TMK325BJ106MM_characteristics}.
+The model is a series RLC circuit.
+
+Table~\ref{tab:taiyo_yuden_caps} shows a selection of Taiyo Yuden
+ceramic capacitor part numbers obtained 
+from~\href{http://www.digikey.com}{Digikey}.
+Note that the Digikey page for each part links to the
+\href{http://www.yuden.co.jp/ut/product/category/capacitor/TMK325BJ106MM-T.pdf}
+{Specification} PDF on the Taiyo Yuden web site. The
+Specification contains only the nominal characteristics of
+the capacitor, rather than the real-world details shown in the 
+\href{http://www.yuden.co.jp/productdata/sheet/tmk325bj106mm.pdf}
+{Characteristics} data sheet (or in Figure~\ref{fig:taiyo_yuden_TMK325BJ106MM_characteristics}). 
+%
+The characteristics in Table~\ref{tab:taiyo_yuden_caps} were estimated
+from the characteristic curves like those in 
+Figures~\ref{fig:taiyo_yuden_Z_and_ESR} 
+through~\ref{fig:taiyo_yuden_temperature}.
+The SPICE model RLC values are slightly different than the estimates
+(perhaps due to best-fit of the SPICE model, or a different 
+measurement frequency for the model parameters).
+Taiyo Yuden does not provide package thermal resistance, so it
+was estimated using the method similar to that used with the
+Murata capacitors, but with a power estimate at 0V DC bias.
+
+% -----------------------------------------------------------------
+% Component Selection Guide and Data Library
+% -----------------------------------------------------------------
+%
+\begin{landscape}
+\begin{figure}[p]
+  \begin{center}
+    \includegraphics[width=210mm]{figures/taiyo_yuden_cap_selector.png}\\
+  \end{center}
+  \caption{Taiyo Yuden capacitor selection GUI.}
+  \label{fig:taiyo_yuden_simsurfing_cap_selector}
+\end{figure}
+\end{landscape}
+
+% -----------------------------------------------------------------
+% Component Selection Guide and Data Library
+% -----------------------------------------------------------------
+%
+\begin{landscape}
+\begin{figure}[p]
+  \begin{center}
+    \includegraphics[width=210mm]{figures/taiyo_yuden_TMK325BJ106MM_all_plots.png}\\
+  \end{center}
+  \caption{Taiyo Yuden TMK325BJ106MM capacitor characteristics.}
+  \label{fig:taiyo_yuden_TMK325BJ106MM_characteristics}
+\end{figure}
+\end{landscape}
+
+% -----------------------------------------------------------------
+% TMK325BJ106MM plots
+% -----------------------------------------------------------------
+%
+% * Select the plot in the GUI
+% * Select 'Save Chart'
+% * Use the pull-down to save as .PDF
+%
+% The PDF can be imported by Inkscape if needed.
+%
+\begin{figure}[p]
+  \begin{center}
+    \includegraphics[width=\textwidth]{figures/taiyo_yuden_TMK325BJ106MM_Z_and_ESR.pdf}
+  \end{center}
+  \caption{Taiyo Yuden 10$\mu$F TMK325BJ106MM capacitor impedance and ESR vs frequency.}
+  \label{fig:taiyo_yuden_Z_and_ESR}
+\end{figure}
+
+\begin{figure}[p]
+  \begin{center}
+    \includegraphics[width=\textwidth]{figures/taiyo_yuden_TMK325BJ106MM_C.pdf}
+  \end{center}
+  \caption{Taiyo Yuden 10$\mu$F TMK325BJ106MM capacitor capacitance vs frequency.}
+  \label{fig:taiyo_yuden_C}
+\end{figure}
+
+\begin{figure}[p]
+  \begin{center}
+    \includegraphics[width=\textwidth]{figures/taiyo_yuden_TMK325BJ106MM_ESL.pdf}
+  \end{center}
+  \caption{Taiyo Yuden 10$\mu$F TMK325BJ106MM capacitor ESL vs frequency.}
+  \label{fig:taiyo_yuden_ESL}
+\end{figure}
+
+\begin{figure}[p]
+  \begin{center}
+    \includegraphics[width=\textwidth]{figures/taiyo_yuden_TMK325BJ106MM_power.pdf}
+  \end{center}
+  \caption{Taiyo Yuden 10$\mu$F TMK325BJ106MM capacitor change in temperature with RMS current.}
+  \label{fig:taiyo_yuden_power}
+\end{figure}
+
+\begin{figure}[p]
+  \begin{center}
+    \includegraphics[width=\textwidth]{figures/taiyo_yuden_TMK325BJ106MM_DC_bias.pdf}
+  \end{center}
+  \caption{Taiyo Yuden 10$\mu$F TMK325BJ106MM capacitor capacitance change with applied DC bias.}
+  \label{fig:taiyo_yuden_DC_bias}
+\end{figure}
+
+\begin{figure}[p]
+  \begin{center}
+    \includegraphics[width=\textwidth]{figures/taiyo_yuden_TMK325BJ106MM_temperature.pdf}
+  \end{center}
+  \caption{Taiyo Yuden 10$\mu$F TMK325BJ106MM capacitor capacitance change vs temperature.}
+  \label{fig:taiyo_yuden_temperature}
+\end{figure}
+
+% -----------------------------------------------------------------
+% Taiyo Yuden part numbers
+% -----------------------------------------------------------------
+
+\begin{landscape}
+\begin{table}[p]
+\small
+\caption{Example Taiyo Yuden ceramic capacitor characteristics (@500kHz).}
+\label{tab:taiyo_yuden_caps}
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c||c|c|c|c||c||c|}
+\hline
+Part   & Cap. & Voltage & Tol. & Dielectric & Package &
+\multicolumn{4}{c||}{DC Bias of 0V}  &
+DC Bias of 50\% & Thermal\\
+%
+\cline{7-11}
+Number &   &     & Rating     &            &         &
+Cap. & ESR & ESL & Current    &
+Cap. (change) & ($\theta_{\rm JA}$)\\
+%
+       & ($\mu$F) & (V) & (\%) & & & 
+($\mu$F) & (m$\Omega$) & (pH) & (A$_{\rm RMS}$) &
+($\mu$F) (\%) &($^\circ$C/W)\\
+\hline\hline
+&&&&&&&&&&&\\
+TMK107BJ105KA &    1 & 25  & $\pm10$ & X5R & 0603 & 0.91 & 9.0 & 520 & 1.4 & 0.50 (-45.0) & 1130\\
+TMK107ABJ225KA&  2.2 & 25  & $\pm10$ & X5R & 0603 & 1.7  & 8.9 & 520 & 1.8 & 0.41 (-76.0) &  690\\
+JMK107BJ106MA &   10 & 6.3 & $\pm20$ & X5R & 0603 & 8.5  & 5.0 & 480 & 3.4 & 3.9  (-54.2) &  350\\
+&&&&&&&&&&&\\
+TMK212BJ105KG &  1.0 &  25 & $\pm10$ & X5R & 0805 & 0.88 & 10.0& 640 & 1.6 & 0.64 (-27.4) &  780\\
+TMK212BBJ475KD&  4.7 &  25 & $\pm10$ & X5R & 0805 & 3.8  & 5.8 & 570 & 2.5 & 0.79 (-79.2) &  550\\
+TMK212BBJ106KG& 10.0 &  25 & $\pm20$ & X5R & 0805 & 8.0  & 3.1 & 530 & 2.7 & 1.8  (-78.0) &  880\\
+&&&&&&&&&&&\\
+TMK316BJ105KD &    1 &  25 & $\pm10$ & X5R & 1206 & 0.90 & 15.8& 870 & 1.4 & 0.63 (-29.7) &  650\\
+TMK316BJ475KD &  4.7 &  25 & $\pm10$ & X5R & 1206 & 4.3  & 5.1 & 700 & 2.4 & 1.8  (-58.5) &  680\\
+TMK316BJ106KL &   10 &  25 & $\pm10$ & X5R & 1206 & 9.0  & 3.0 & 690 & 3.4 & 4.0  (-55.3) &  580\\
+&&&&&&&&&&&\\
+HMK325B7105KN &    1 & 100 & $\pm10$ & X5R & 1210 & 0.95 & 9.3 & 460 & 1.6 & 0.53 (-44.1) &  840\\
+TMK325BJ106MM &   10 &  25 & $\pm10$ & X5R & 1210 & 9.2  & 3.5 & 500 & 3.5 & 6.4  (-34.2) &  470\\
+EMK325BJ476MM &   47 &  16 & $\pm10$ & X5R & 1210 & 41.5 & 2.9 & 460 & 3.1 & 19.5 (-53.0) &  720\\
+&&&&&&&&&&&\\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+\end{landscape}
+
+\clearpage
+% -----------------------------------------------------------------
+\subsection{TDK}
+% -----------------------------------------------------------------
+
+The TDK \href{http://www.tdk.com/design-tools.php}
+{Technical Support Tools} web page provides several tools for
+component selection and characterization.
+There are two component modeling tools; 
+\href{http://www.tdk.com/seat.php}
+{Selection Assistant of TDK components} (SEAT) and 
+\href{http://www.tdk.co.jp/ccv/index.asp}
+{Component Characteristics Viewer} (CCV). 
+%
+A comparison of the tools can be found in the application note
+\href{http://www.tdk.com/pdf/SEATs_vs_CCV.pdf}{SEAT vs CCV}.
+The main difference between the tools is that CCV is an online tool,
+whereas SEAT is run locally.
+%
+SPICE models for components are available from the
+\href{http://www.tdk.com/tvcl.php}{TDK Virtual Component Library} (TVCL).
+
+
+Figures~\ref{fig:tdk_seat_gui_Z_and_ESR} through~\ref{fig:tdk_seat_gui_power}
+show screen-shots of the TDK SEAT component selection tool, with
+the 10$\mu$F C3225X5R1E106K capacitor selected. Details on
+the figures are;
+%
+\begin{itemize}
+%
+\item
+Figure~\ref{fig:tdk_seat_gui_Z_and_ESR} shows the impedance and ESR overlayed
+on a single frequency plot. 
+
+This plot was generated by;
+\begin{itemize}
+\item Selecting {\em Impedance} tab at the top of the GUI.
+\item Plot impedance by clicking on the orange $|Z|$ button.
+\item Plot ESR by clicking on the orange $R$ button.
+\item Using the {\em Graph Setting} tab on the right-side of the figure,
+change the x-axis of the plot from MHz to kHz.
+\end{itemize}
+%
+\item Figure~\ref{fig:tdk_seat_gui_DC_bias} shows the capacitance value change
+with DC bias.
+
+This plot was generated by;
+\begin{itemize}
+\item Selecting {\em DC-Bias/Temp./Osc. Chara.} tab at the top of the GUI.
+\item Under the {\em DC-Bias Characteristic} field at the top of the GUI $\dots$
+\item There are two bullet options; {\em Value} and {\em Change}. 
+Select {\em Value} to plot the change in capacitance in $\mu$F
+(the {\em Change} option plots the change in percent). 
+\item To the right of the bullets is a scroll menu, scroll the menu
+until the orange $C_S$ (series capacitance) button is shown. 
+\item Click the $C_S$ button.
+\item Using the {\em Graph Setting} tab on the right-side of the figure,
+change the y-axis of the plot from log to linear.
+\end{itemize}
+%
+\item Figure~\ref{fig:tdk_seat_gui_power} shows the power handling
+of the capacitor.
+
+This plot was generated by;
+\begin{itemize}
+\item Selecting {\em Simulation/Tool} tab at the top of the GUI.
+\item Clicking on the {\em Temp. Rise} button. This causes the 
+{\em Temperature Rise Simulation} GUI to appear in the main window.
+\item On the {\em Temperature Rise Simulation} GUI select the {\em Capacitor}
+tab.
+\item Under the {\em Sine Waveform} tab, select {\em Current Source}
+and enter a {\em Frequency} of 500kHz. 
+\item Click the {\em Simulate} button.
+\item Move the mouse over the plot to show the current at a temperature
+rise of 20$^\circ$C. This is the maximum current handling of the capacitor.
+\end{itemize}
+%
+\end{itemize}
+%
+Each of the characteristic curves can be saved to .bmp, .jpg, or .png.
+Figures~\ref{fig:tdk_Z_and_ESR} through~\ref{fig:tdk_DC_bias} show the
+curves for the 10$\mu$ C3225X5R1E106K capacitor\footnote{
+The ESL display in Figure~\ref{fig:tdk_ESL} has a {\em bug}; 
+the data is offset along the x-axis by 1000 times.}.
+%
+The 
+\href{http://www.tdk.com/pdf/etutorial_all.pdf}{SEAT Tutorial}
+describes how to use the extensive features of the tool.
+
+\clearpage
+Table~\ref{tab:tdk_caps} shows a selection of TDK
+ceramic capacitor part numbers obtained 
+from~\href{http://www.digikey.com}{Digikey}, with
+characteristics provided by the SEAT tool. 
+%
+Not all parts on Digikey have SEAT characterization data
+(or complete data), eg., the table entry for C3225X7R1H105K
+is missing the change in capacitance and the power parameters.
+%
+The thermal resistance, $\theta_{\rm JA}$, was obtained from the
+default value given on the {\em Temperature Rise Simulation} GUI
+(Figure~\ref{fig:tdk_seat_gui_power}) for each part. 
+Table~\ref{tab:tdk_caps} shows that the thermal resistance is a 
+constant value for each package size.
+Power handling data can also be found on the TDK web site;
+\href{http://www.tdk.com/tvcl_ircd.php}{Capacitors - Impedance and Ripple Current Data}.
+
+% -----------------------------------------------------------------
+% TDK SEAT GUI
+% -----------------------------------------------------------------
+%
+\begin{landscape}
+\begin{figure}[p]
+  \begin{center}
+    \includegraphics[width=210mm]{figures/tdk_seat_gui_Z_and_ESR.png}\\
+  \end{center}
+  \caption{TDK SEAT component selection tool; capacitor impedance and DC resistance.}
+  \label{fig:tdk_seat_gui_Z_and_ESR}
+\end{figure}
+\end{landscape}
+
+\begin{landscape}
+\begin{figure}[p]
+  \begin{center}
+    \includegraphics[width=210mm]{figures/tdk_seat_gui_DC_bias.png}\\
+  \end{center}
+  \caption{TDK SEAT component selection tool; capacitor capacitance change with DC bias.}
+  \label{fig:tdk_seat_gui_DC_bias}
+\end{figure}
+\end{landscape}
+
+\begin{landscape}
+\begin{figure}[p]
+  \begin{center}
+    \includegraphics[width=210mm]{figures/tdk_seat_gui_power.png}\\
+  \end{center}
+  \caption{TDK SEAT component selection tool; capacitor power handling.}
+  \label{fig:tdk_seat_gui_power}
+\end{figure}
+\end{landscape}
+
+% -----------------------------------------------------------------
+% 10uF C3225X5R1E106K plots
+% -----------------------------------------------------------------
+%
+% These were saved via right-clicking on the image and saving as
+% .png, however, the .png files cause pdflatex to crash. The
+% files were converted to .bmp and back to .png using
+% png2bmp and bmp2png. Next time just save .bmp and convert
+% to .png.
+%
+\begin{figure}[p]
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{figures/tdk_C3225X5R1E106K_Z_and_ESR.png}
+  \end{center}
+  \caption{TDK 10$\mu$F C3225X5R1E106K capacitor impedance and ESR vs frequency.}
+  \label{fig:tdk_Z_and_ESR}
+\end{figure}
+
+\begin{figure}[p]
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{figures/tdk_C3225X5R1E106K_C.png}
+  \end{center}
+  \caption{TDK 10$\mu$F C3225X5R1E106K capacitor capacitance vs frequency.}
+  \label{fig:tdk_C}
+\end{figure}
+
+\begin{figure}[p]
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{figures/tdk_C3225X5R1E106K_ESL.png}
+  \end{center}
+  \caption{TDK 10$\mu$F C3225X5R1E106K capacitor capacitor ESL vs frequency.}
+  \label{fig:tdk_ESL}
+\end{figure}
+
+\begin{figure}[p]
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{figures/tdk_C3225X5R1E106K_power.png}
+  \end{center}
+  \caption{TDK 10$\mu$F C3225X5R1E106K capacitor change in temperature with RMS current.}
+  \label{fig:tdk_power}
+\end{figure}
+
+\begin{figure}[p]
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{figures/tdk_C3225X5R1E106K_DC_bias_C.png}\\
+    (a) change in capacitance\\
+    $\quad$\\
+    \includegraphics[width=0.8\textwidth]{figures/tdk_C3225X5R1E106K_DC_bias_dC.png}\\
+    (b) relative change\\
+  \end{center}
+  \caption{TDK 10$\mu$F C3225X5R1E106K capacitor capacitance change with applied DC bias.}
+  \label{fig:tdk_DC_bias}
+\end{figure}
+
+% -----------------------------------------------------------------
+% TDK part numbers
+% -----------------------------------------------------------------
+
+\begin{landscape}
+\begin{table}[p]
+\small
+\caption{Example TDK ceramic capacitor characteristics (@500kHz).}
+\label{tab:tdk_caps}
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c||c|c|c|c||c||c|}
+\hline
+Part   & Cap. & Voltage & Tol. & Dielectric & Package &
+\multicolumn{4}{c||}{DC Bias of 0V}  &
+DC Bias of 50\% & Thermal\\
+%
+\cline{7-11}
+Number &   &     & Rating     &            &         &
+Cap. & ESR & ESL & Current    &
+Cap. (change) & ($\theta_{\rm JA}$)\\
+%
+       & ($\mu$F) & (V) & (\%) & & & 
+($\mu$F) & (m$\Omega$) & (pH) & (A$_{\rm RMS}$) &
+($\mu$F) (\%) &($^\circ$C/W)\\
+\hline\hline
+&&&&&&&&&&&\\
+C1608X5R1E105K &   1 &  25 & $\pm10$ & X5R & 0603 &  0.91 &  7.5 &  720 & 1.9 & 0.61 (-39.0) & 740 \\
+C1608X5R1C475K & 4.7 &  16 & $\pm10$ & X5R & 0603 &   4.0 &  4.3 &  740 & 2.5 & 0.88 (-81.3) & 740 \\
+C1608X5R1A106K &  10 &  10 & $\pm10$ & X5R & 0603 &   8.0 &  4.8 &  440 & 0.4 &  2.4 (-76.3) & 740 \\
+&&&&&&&&&&&\\
+C2012X5R1E105K &   1 &  25 & $\pm10$ & X5R & 0805 &  0.94 &  8.1 &  740 & 2.3 & 0.74 (-25.6) & 470 \\
+C2012X5R1H475K & 4.7 &  50 & $\pm10$ & X5R & 0805 &   4.6 &  2.5 &  650 & 4.1 & 0.96 (-79.6) & 470 \\
+C2012X5R1E106K &  10 &  25 & $\pm10$ & X5R & 0805 &  10.0 &  9.7 &  670 & 6.5 &  3.1 (-69.4) & 470 \\
+C2012X5R1A476M &  47 &  10 & $\pm20$ & X5R & 0805 &  47.0 &  2.4 &  620 & 4.2 & 14.1 (-70.0) & 470 \\
+&&&&&&&&&&&\\
+C3216X5R1H105K &   1 & 100 & $\pm10$ & X5R & 1206 &  0.90 & 12.2 & 1100 & 2.1 & 0.46 (-53.9) & 380 \\
+C3216X5R1E106K &  10 &  25 & $\pm10$ & X5R & 1206 &  10.0 &  2.2 &  890 & 4.9 &  5.8 (-42.0) & 380 \\
+C3216X5R1E476M &  47 &  25 & $\pm20$ & X5R & 1206 &  47.0 &  1.6 &  930 & 5.8 &  5.2 (-89.0) & 380 \\
+C3216X5R1A107M & 100 &  10 & $\pm20$ & X5R & 1206 & 100.0 &  1.7 &  910 & 5.5 & 26.6 (-73.4) & 380 \\
+&&&&&&&&&&&\\
+C3225X7R1H105K &   1 &  50 & $\pm10$ & X7R & 1210 &  0.97 & 7.5 & 1060 &     &              & \\
+C3225X7R1H335K & 3.3 &  50 & $\pm10$ & X7R & 1210 &   3.3 & 4.1 & 1040 & 3.7 &  1.8 (-44.4) & 370 \\
+C3225X5R1E106K &  10 &  25 & $\pm10$ & X5R & 1210 &  10.8 & 2.4 & 1000 & 4.2 &  7.6 (-24.4) & 370\\
+C3225X5R0J107M & 100 & 6.3 & $\pm10$ & X7R & 1210 & 100.0 & 2.0 &  960 & 5.2 & 55.7 (-44.3) & 370 \\
+&&&&&&&&&&&\\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+\end{landscape}
+
+\clearpage
+% -----------------------------------------------------------------
+\subsection{Discussion}
+% -----------------------------------------------------------------
+
+A comparison of the tables of capacitor parameters generated for
+the different manufacturers provides the following generalizations;
+%
+\begin{itemize}
+%
+\item Package thermal resistance.
+
+The estimates for the package thermal resistance of the Kemet capacitors
+(Table~\ref{tab:kemet_caps}) are significantly lower than those
+of the Murata capacitors (Table~\ref{tab:murata_caps}), the
+Taiyo Yuden capacitors (Table~\ref{tab:taiyo_yuden_caps}), and
+the TDK capacitors (Table~\ref{tab:tdk_caps}).
+
+Its not clear whether the Kemet capacitors are really more thermally 
+conductive than the Murata, Taiyo Yuden and TDK parts, or the temperature
+rise was simply measured using a different method.
+
+The TDK thermal resistance values should be used when estimating
+power dissipation (since the thermal resistance was explicitly provided,
+and they are of similar magnitude to the Murata and Taiyo Yuden values).
+
+\item Equivalent Series Inductance (ESL).
+
+The Kemet capacitors (Table~\ref{tab:kemet_caps}) have the highest
+estimates, while the Murata capacitors (Table~\ref{tab:murata_caps})
+have the lowest estimates.
+%
+The variation in ESL is likely due to Murata de-embedded the inductance
+of the surface-mount pads and solder filets. The lower valued
+estimates should be considered conservative.
+\end{itemize}
+%
+
+\clearpage
+% =================================================================
+\section{Power Supply Design Examples}
+% =================================================================
+
+% -----------------------------------------------------------------
+\subsection{Input Capacitors}
+% -----------------------------------------------------------------
+
+{\bf TODO:}
+\begin{itemize}
+\item Single-phase and dual-phase LTspice power-supply, eg.,
+LTC3855 or LTC3880 0.95V@20A and 40A.
+\item Show the input waveforms for an ideal capacitor,
+capacitor plus ESR, and capacitor plus ESR plus ESL.
+\item Show the input waveforms for some of the vendor
+capacitor models.
+\item Show the current through the high-side MOSFET, and
+then show how it splits between the input power source and
+the input decoupling depending on the impedance of the
+power source, eg., with a 1-Ohm series resistor, the switching
+current comes mostly from the input caps, but there is a large
+input voltage drop over the resistor (but that is ok, since this
+is just a simulation to estimate the RMS current in the caps).
+Measure the input cap RMS current for various input source
+resistances.
+\end{itemize}
+
+% -----------------------------------------------------------------
+\subsection{Output Capacitors}
+% -----------------------------------------------------------------
+
+{\bf TODO:}
+\begin{itemize}
+\item Load transient increase/decrease load dip/peaking formula.
+\item Sanyo POSCAPs with ceramics in parallel.
+\end{itemize}
+
+\clearpage
+% -----------------------------------------------------------------
+% Do the bibliography
+% -----------------------------------------------------------------
+%Note, you can't have spaces in the list of bibliography files
+%
+\bibliography{refs}
+\bibliographystyle{plain}
+
+% -----------------------------------------------------------------
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
